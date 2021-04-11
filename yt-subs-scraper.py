@@ -72,23 +72,24 @@ class WebDriver:
         except:
           print("No need to verify login, or something even worse happened")
 
-        print("Logged in!")
+        print(f"Logged in as {self.username}!")
 
     def read_subs(self):
         self.driver.refresh()
+        self.driver.implicitly_wait(30)
         count_element = self.driver.find_element_by_xpath("//div[contains(@class, 'subscribers-title')]/following-sibling::div")
         return int(re.sub("[^0-9]", "", count_element.text))
 
 with WebDriver() as driver:
   driver.login()
   while True:
-    time.sleep(60)
     print("Refreshing subscription count...")
     try:
       subs = driver.read_subs()
-      print(subs)
+      print(f"Writing current sub count {subs} to file...")
       text_file = open("subs.txt", "w")
       text_file.write(str(subs))
       text_file.close()
     except:
       print("Failed to get subscription count")
+    time.sleep(30)
